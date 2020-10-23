@@ -98,7 +98,7 @@ class GaroonClient:
 
         if start is not None:
             params["rangeStart"] = start.strftime(RFC3339)
-            params["rangeEnd"] = (start + timedelta(days=3)).strftime(RFC3339)
+            params["rangeEnd"] = (start + timedelta(days=4)).strftime(RFC3339)
 
         return params
 
