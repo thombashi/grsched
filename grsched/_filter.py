@@ -5,7 +5,7 @@ from pytablewriter.style import Cell, Style
 from tcolorpy import Color
 
 
-DEFAULT_COLOR = Color("white")
+GRAY = Color("#bfbfbf")
 
 
 def _calc_other_ground_color(color: Color) -> Color:
@@ -24,23 +24,18 @@ def col_separator_style_filter(lcell: Cell, rcell: Cell, **kwargs) -> Optional[S
     col = lcell.col if lcell else rcell.col
     dtrs = kwargs["dtrs"]
     now = kwargs["now"]
-    color = DEFAULT_COLOR
-    is_end = dtrs[row].end_datetime <= now
 
     if row < 0:
         return None
 
-    if row % 2 == 0:
-        fg_color = _calc_other_ground_color(color)
-        if is_end:
-            bg_color = "#afafaf"
-        else:
-            bg_color = "light white"
-    else:
-        fg_color = color
+    is_end = dtrs[row].end_datetime <= now
+    ddays = max(0, dtrs[row].end_datetime.day - now.day)
+    n = max(0, 255 - ddays * 32)
+    bg_color = Color((n, n, n))
+    fg_color = "black"
 
     if is_end:
-        fg_color = "light black"
+        fg_color = GRAY
 
     if fg_color or bg_color:
         return Style(color=fg_color, bg_color=bg_color)
@@ -53,23 +48,18 @@ def style_filter(cell: Cell, **kwargs) -> Optional[Style]:
     bg_color = None  # type: Union[Color, str, None]
     dtrs = kwargs["dtrs"]
     now = kwargs["now"]
-    color = DEFAULT_COLOR
-    is_end = dtrs[cell.row].end_datetime <= now
 
     if cell.row < 0:
         return None
 
-    elif cell.row % 2 == 0:
-        fg_color = _calc_other_ground_color(color)
-        if is_end:
-            bg_color = "#afafaf"
-        else:
-            bg_color = "light white"
-    else:
-        fg_color = color
+    is_end = dtrs[cell.row].end_datetime <= now
+    ddays = max(0, dtrs[cell.row].end_datetime.day - now.day)
+    n = max(0, 255 - ddays * 32)
+    bg_color = Color((n, n, n))
+    fg_color = "black"
 
     if is_end:
-        fg_color = "light black"
+        fg_color = GRAY
 
     if fg_color or bg_color:
         return Style(color=fg_color, bg_color=bg_color)
