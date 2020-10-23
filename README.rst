@@ -5,6 +5,23 @@
 
 Summary
 ============================================
+.. image:: https://badge.fury.io/py/grsched.svg
+    :target: https://badge.fury.io/py/grsched
+    :alt: PyPI package version
+
+.. image:: https://img.shields.io/pypi/pyversions/grsched.svg
+    :target: https://pypi.org/project/grsched
+    :alt: Supported Python versions
+
+.. image:: https://img.shields.io/pypi/implementation/grsched.svg
+    :target: https://pypi.org/project/grsched
+    :alt: Supported Python implementations
+
+.. image:: https://github.com/thombashi/grsched/workflows/Tests/badge.svg
+    :target: https://github.com/thombashi/grsched/actions?query=workflow%3ATests
+    :alt: Linux/macOS/Windows CI status
+
+
 A tool to show Garoon schedule at terminals.
 
 
