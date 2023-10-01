@@ -1,6 +1,7 @@
 # type: ignore
 
 import sys
+from typing import Final
 
 import appconfigpy
 import pytablewriter
@@ -9,9 +10,9 @@ from ._const import MODULE_NAME
 
 
 class LogLevel:
-    DEBUG = "DEBUG"
-    INFO = "INFO"
-    QUIET = "QUIET"
+    DEBUG: Final[str] = "DEBUG"
+    INFO: Final[str] = "INFO"
+    QUIET: Final[str] = "QUIET"
 
 
 class NullLogger:
