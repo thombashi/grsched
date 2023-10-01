@@ -63,6 +63,8 @@ setuptools.setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3 :: Only",
+        "Topic :: Office/Business :: Groupware",
+        "Topic :: Office/Business :: Scheduling",
         "Topic :: Terminals",
     ],
     cmdclass=get_release_command_class(),
