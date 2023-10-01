@@ -90,7 +90,7 @@ def initialize_logger(name: str, log_level: str) -> None:
     else:
         log_format = "<level>[{level}]</level> {message}"
 
-    logger.add(sys.stdout, colorize=True, format=log_format, level=log_level)
+    logger.add(sys.stderr, colorize=True, format=log_format, level=log_level)
     logger.enable(name)
 
     appconfigpy.set_logger(True)
