@@ -39,7 +39,7 @@ setuptools.setup(
     url=REPOSITORY_URL,
     author=pkg_info["__author__"],
     author_email=pkg_info["__email__"],
-    description="DESCRIPTION",
+    description="A tool to show Garoon schedule at terminals.",
     include_package_data=True,
     keywords=["garoon", "groupware"],
     license=pkg_info["__license__"],
