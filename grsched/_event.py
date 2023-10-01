@@ -1,14 +1,15 @@
+from dataclasses import dataclass
 from typing import Any, List
 
 from datetimerange import DateTimeRange
 from tcolorpy import tcolor
 
 
+@dataclass(frozen=True)
 class Object:
-    def __init__(self, id: int, name: str, code: str) -> None:
-        self.id = id
-        self.name = name
-        self.code = code
+    id: int
+    name: str
+    code: str
 
 
 class User(Object):
