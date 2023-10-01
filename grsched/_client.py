@@ -6,7 +6,7 @@ import retryrequests
 
 from ._const import LIMIT, MODULE_NAME, RFC3339
 from ._event import Event, User
-from ._logger import logger
+from ._logger import logger  # type: ignore
 
 
 class GaroonClient:

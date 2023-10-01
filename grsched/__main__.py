@@ -1,9 +1,9 @@
 import errno
 import sys
-from datetime import date, datetime
+from datetime import datetime
 from enum import Enum, unique
 from textwrap import dedent
-from typing import Optional, Tuple
+from typing import Final, List, Optional, Tuple
 
 import click
 import pytablewriter as ptw
@@ -17,10 +17,10 @@ from ._client import GaroonClient
 from ._config import ConfigKey, app_config_mgr
 from ._const import MODULE_NAME
 from ._filter import col_separator_style_filter, style_filter
-from ._logger import LogLevel, initialize_logger, logger
+from ._logger import LogLevel, initialize_logger, logger  # type: ignore
 
 
-COMMAND_EPILOG = dedent(
+COMMAND_EPILOG: Final[str] = dedent(
     """\
     Issue tracker: https://github.com/thombashi/grsched/issues
     """
@@ -58,7 +58,7 @@ def _extract_targets(user: Optional[str] = None) -> Tuple[Optional[str], Optiona
 )
 @click.option("-v", "--verbose", "verbosity_level", count=True)
 @click.pass_context
-def cmd(ctx, log_level: str, verbosity_level: int):
+def cmd(ctx: click.Context, log_level: str, verbosity_level: int) -> None:
     """
     common cmd help
     """
@@ -79,7 +79,7 @@ def cmd(ctx, log_level: str, verbosity_level: int):
 
 @cmd.command(epilog=COMMAND_EPILOG)
 @click.pass_context
-def version(ctx):
+def version(ctx: click.Context) -> None:
     """
     Show version information
     """
@@ -91,7 +91,7 @@ def version(ctx):
 
 @cmd.command(epilog=COMMAND_EPILOG)
 @click.pass_context
-def configure(ctx):
+def configure(ctx: click.Context) -> None:
     """
     Setup configurations of the tool.
     """
@@ -107,7 +107,7 @@ def configure(ctx):
 @click.option(
     "--user", metavar="USER_ID", help="user id of the target. defaults to the login user."
 )
-def show(ctx, event_ids, user):
+def show(ctx: click.Context, event_ids: List[str], user: Optional[str]) -> None:
     """
     Show specific event(s).
     EVENT_IDS must be space-separated IDs of events to be shown.
@@ -121,6 +121,7 @@ def show(ctx, event_ids, user):
     )
     target, target_type = _extract_targets(user)
     now = datetime.now(tz=tz.tzlocal())
+    now = now.replace(minute=0, second=0, microsecond=0)
 
     for event_id in event_ids:
         logger.debug(f"event: {event_id}")
@@ -128,7 +129,7 @@ def show(ctx, event_ids, user):
         if event_id == "next":
             try:
                 events, _has_next = client.fetch_events(
-                    start=date(now.year, now.month, now.day), target=target, target_type=target_type
+                    start=now, target=target, target_type=target_type
                 )
             except (HTTPError, TooManyRedirects) as e:
                 logger.error(e)
@@ -136,6 +137,10 @@ def show(ctx, event_ids, user):
 
             for event in events:
                 if event.is_all_day:
+                    continue
+
+                if event.dtr.start_datetime is None:
+                    logger.warning(f"start_datetime of a event ({event}) is None")
                     continue
 
                 if now < event.dtr.start_datetime:
@@ -148,7 +153,7 @@ def show(ctx, event_ids, user):
             continue
 
         try:
-            event = client.fetch_event(event_id)
+            event = client.fetch_event(int(event_id))
         except (HTTPError, TooManyRedirects) as e:
             logger.error(e)
             sys.exit(errno.EACCES)
@@ -161,8 +166,8 @@ def show(ctx, event_ids, user):
 @click.option(
     "--user", metavar="USER_ID", help="user id of the target. defaults to the login user."
 )
-@click.option("--since", metavar="DATETIME", help="datetime.")
-def events(ctx, user, since):
+@click.option("--since", "since_str", metavar="DATETIME", help="datetime.")
+def events(ctx: click.Context, user: Optional[str], since_str: Optional[str]) -> None:
     """
     List events.
     """
@@ -174,15 +179,14 @@ def events(ctx, user, since):
         subdomain=app_configs[ConfigKey.SUBDOMAIN], basic_auth=app_configs[ConfigKey.BASIC_AUTH]
     )
 
-    if since:
-        since = parse(since)
-    else:
+    if since_str is None:
         since = datetime.now(tz=tz.tzlocal())
+    else:
+        since = parse(since_str)
+    since = since.replace(minute=0, second=0, microsecond=0)
 
     try:
-        events, _has_next = client.fetch_events(
-            start=date(since.year, since.month, since.day), target=target, target_type=target_type
-        )
+        events, _has_next = client.fetch_events(start=since, target=target, target_type=target_type)
     except (HTTPError, TooManyRedirects) as e:
         logger.error(e)
         sys.exit(errno.EACCES)
@@ -206,7 +210,7 @@ def events(ctx, user, since):
 
 @cmd.command(epilog=COMMAND_EPILOG)
 @click.pass_context
-def users(ctx):
+def users(ctx: click.Context) -> None:
     """
     List users.
     """

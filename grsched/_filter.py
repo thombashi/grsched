@@ -1,11 +1,10 @@
-from typing import Union  # noqa
-from typing import Optional
+from typing import Any, Final, Optional, Union
 
 from pytablewriter.style import Cell, Style
 from tcolorpy import Color
 
 
-GRAY = Color("#bfbfbf")
+GRAY: Final[Color] = Color("#bfbfbf")
 
 
 def _calc_other_ground_color(color: Color) -> Color:
@@ -17,11 +16,20 @@ def _calc_other_ground_color(color: Color) -> Color:
     return color
 
 
-def col_separator_style_filter(lcell: Cell, rcell: Cell, **kwargs) -> Optional[Style]:
-    fg_color = None  # type: Union[Color, str, None]
-    bg_color = None  # type: Union[Color, str, None]
-    row = lcell.row if lcell else rcell.row
-    col = lcell.col if lcell else rcell.col
+def col_separator_style_filter(
+    lcell: Optional[Cell], rcell: Optional[Cell], **kwargs: Any
+) -> Optional[Style]:
+    fg_color: Union[Color, str, None] = None
+    bg_color: Union[Color, str, None] = None
+
+    cell = lcell if lcell else rcell
+    if cell is None:
+        return None
+
+    if cell.is_header_row():
+        return None
+
+    row = cell.row
     dtrs = kwargs["dtrs"]
     now = kwargs["now"]
 
@@ -43,9 +51,9 @@ def col_separator_style_filter(lcell: Cell, rcell: Cell, **kwargs) -> Optional[S
     return None
 
 
-def style_filter(cell: Cell, **kwargs) -> Optional[Style]:
-    fg_color = None  # type: Union[Color, str, None]
-    bg_color = None  # type: Union[Color, str, None]
+def style_filter(cell: Cell, **kwargs: Any) -> Optional[Style]:
+    fg_color: Union[Color, str, None] = None
+    bg_color: Union[Color, str, None] = None
     dtrs = kwargs["dtrs"]
     now = kwargs["now"]
 

@@ -1,4 +1,4 @@
-from typing import List
+from typing import Any, List
 
 from datetimerange import DateTimeRange
 from tcolorpy import tcolor
@@ -20,18 +20,18 @@ class Facility(Object):
 
 
 class Event:
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         self.id = int(kwargs["id"])
         self.creator = User(**kwargs["creator"])
-        self.created_at = kwargs["createdAt"]
+        self.created_at: str = kwargs["createdAt"]
         self.updater = User(**kwargs["updater"])
-        self.updated_at = kwargs["updatedAt"]
-        self.event_menu = kwargs["eventMenu"]
-        self.subject = kwargs["subject"]
-        self.notes = kwargs["notes"].replace("\r\n", "\n")
-        self.is_all_day = kwargs["isAllDay"]
-        self.attendees = []
-        self.facilities = []
+        self.updated_at: str = kwargs["updatedAt"]
+        self.event_menu: str = kwargs["eventMenu"]
+        self.subject: str = kwargs["subject"]
+        self.notes: str = kwargs["notes"].replace("\r\n", "\n")
+        self.is_all_day: bool = kwargs["isAllDay"]
+        self.attendees: List[User] = []
+        self.facilities: List[Facility] = []
 
         if "facilities" in kwargs:
             for data in kwargs["facilities"]:
