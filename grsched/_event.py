@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Any, List
+from typing import Any, Final, List
 
 from datetimerange import DateTimeRange
 from tcolorpy import tcolor
@@ -60,8 +60,8 @@ class Event:
         return [self.id, self.dtr, self.__make_subject()]
 
     def as_markdown(self) -> str:
-        h1_color = "cyan"
-        h2_color = "light cyan"
+        h1_color: Final[str] = "cyan"
+        h2_color: Final[str] = "light cyan"
 
         lines = [
             tcolor(f"# {self.__make_subject()}", color=h1_color),
