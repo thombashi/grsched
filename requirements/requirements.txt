@@ -1,9 +1,9 @@
-appconfigpy>=1.0.1,<2
-click>=6.2,<8
-DateTimeRange>=1.0.0,<2
-envinfopy>=0.0.3,<1
+appconfigpy>=2.0.0,<3
+click>=6.2,<9
+DateTimeRange>=2.1.0,<3
+envinfopy>=0.2,<1
 loguru>=0.4.1,<1
-pytablewriter>=0.58.0,<1
-pytablewriter_altrow_theme>=0.0.2,<1
+pytablewriter>=1.1.0,<2
+pytablewriter_altrow_theme>=0.1.0,<1
 retryrequests>=0.0.2,<1
-tcolorpy>=0.0.8,<1
+tcolorpy>=0.1.4,<1
