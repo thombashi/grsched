@@ -66,7 +66,7 @@ def cmd(ctx, log_level: str, verbosity_level: int):
     ctx.obj[Context.LOG_LEVEL] = LogLevel.INFO if log_level is None else log_level
     ctx.obj[Context.VERBOSITY_LEVEL] = verbosity_level
 
-    initialize_logger(name="{:s}".format(MODULE_NAME), log_level=ctx.obj[Context.LOG_LEVEL])
+    initialize_logger(name=f"{MODULE_NAME:s}", log_level=ctx.obj[Context.LOG_LEVEL])
 
     try:
         app_configs = app_config_mgr.load()
@@ -96,7 +96,7 @@ def configure(ctx):
     Setup configurations of the tool.
     """
 
-    logger.debug("{} configuration file existence: {}".format(MODULE_NAME, app_config_mgr.exists))
+    logger.debug(f"{MODULE_NAME} configuration file existence: {app_config_mgr.exists}")
 
     sys.exit(app_config_mgr.configure())
 
@@ -123,7 +123,7 @@ def show(ctx, event_ids, user):
     now = datetime.now(tz=tz.tzlocal())
 
     for event_id in event_ids:
-        logger.debug("event: {}".format(event_id))
+        logger.debug(f"event: {event_id}")
 
         if event_id == "next":
             try:

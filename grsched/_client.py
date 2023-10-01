@@ -12,13 +12,13 @@ from ._logger import logger
 class GaroonClient:
     def __init__(self, subdomain: str, basic_auth: str) -> None:
         if not subdomain:
-            logger.error("require a valid subdomain. try '{} configure' first.".format(MODULE_NAME))
+            logger.error(f"require a valid subdomain. try '{MODULE_NAME} configure' first.")
             sys.exit(1)
 
         self.__subdomain = "{}.cybozu.com".format(subdomain.strip().rstrip(".cybozu.com"))
         self.__basic_auth = basic_auth
 
-        logger.debug("subdomain: {}".format(self.__subdomain))
+        logger.debug(f"subdomain: {self.__subdomain}")
 
     def fetch_event(self, id: int) -> Event:
         response = retryrequests.get(
@@ -68,7 +68,7 @@ class GaroonClient:
 
     def __make_headers(self) -> Dict[str, str]:
         return {
-            "Host": "{}:443".format(self.__subdomain),
+            "Host": f"{self.__subdomain}:443",
             "X-Cybozu-Authorization": self.__basic_auth,
         }
 
@@ -103,8 +103,8 @@ class GaroonClient:
         return params
 
     def __make_url(self, endpoint: str, id: Optional[int] = None) -> str:
-        url = "https://{}/g/api/v1/{}".format(self.__subdomain, endpoint)
+        url = f"https://{self.__subdomain}/g/api/v1/{endpoint}"
         if id is not None:
-            url = "{}/{}".format(url, id)
+            url = f"{url}/{id}"
 
         return url

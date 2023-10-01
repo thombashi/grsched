@@ -63,7 +63,7 @@ class Event:
         h2_color = "light cyan"
 
         lines = [
-            tcolor("# {}".format(self.__make_subject()), color=h1_color),
+            tcolor(f"# {self.__make_subject()}", color=h1_color),
             tcolor("## Date and time", color=h2_color),
             str(self.dtr),
             "",
@@ -81,7 +81,7 @@ class Event:
         if self.attendees:
             lines.extend(
                 [
-                    tcolor("## Attendees ({} users)".format(len(self.attendees)), color=h2_color),
+                    tcolor(f"## Attendees ({len(self.attendees)} users)", color=h2_color),
                     self.__make_attendees_block(),
                     "",
                 ]
@@ -94,8 +94,8 @@ class Event:
             [
                 "",
                 "---",
-                "- Registrant: {}  {}".format(self.creator.name, self.created_at),
-                "- Updater: {}  {}".format(self.updater.name, self.updated_at),
+                f"- Registrant: {self.creator.name}  {self.created_at}",
+                f"- Updater: {self.updater.name}  {self.updated_at}",
             ]
         )
 
@@ -103,9 +103,9 @@ class Event:
 
     def __make_subject(self) -> str:
         if self.event_menu:
-            return "{}: {}".format(self.event_menu, self.subject)
+            return f"{self.event_menu}: {self.subject}"
 
-        return "{}".format(self.subject)
+        return f"{self.subject}"
 
     def __make_attendees_block(self) -> str:
         threshold = 10
