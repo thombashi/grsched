@@ -25,7 +25,7 @@ COMMAND_EPILOG: Final[str] = dedent(
     Issue tracker: https://github.com/thombashi/grsched/issues
     """
 )
-CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"], obj={})
+CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"], show_default=True, obj={})
 
 
 @unique
