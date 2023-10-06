@@ -7,7 +7,6 @@ from typing import Final, List, Optional, Tuple
 
 import click
 import pytablewriter as ptw
-import pytz
 from dateutil import tz
 from dateutil.parser import parse
 from requests.exceptions import HTTPError, TooManyRedirects
