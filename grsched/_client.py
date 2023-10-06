@@ -4,7 +4,7 @@ from typing import Dict, List, Optional, Tuple
 
 import retryrequests
 
-from ._const import LIMIT, MODULE_NAME, RFC3339
+from ._const import LIMIT, MODULE_NAME
 from ._event import Event, User
 from ._logger import logger  # type: ignore
 
@@ -97,8 +97,8 @@ class GaroonClient:
         }
 
         if start is not None:
-            params["rangeStart"] = start.strftime(RFC3339)
-            params["rangeEnd"] = (start + timedelta(days=4)).strftime(RFC3339)
+            params["rangeStart"] = start.isoformat("T")
+            params["rangeEnd"] = (start + timedelta(days=days)).isoformat("T")
 
         return params
 
