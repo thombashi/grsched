@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import Any, Final, List
 
+import pytz
 from datetimerange import DateTimeRange
 from tcolorpy import tcolor
 
@@ -44,10 +45,11 @@ class Event:
 
             self.attendees.append(User(data["id"], data["name"], data["code"]))
 
-        self.timezone = kwargs["start"]["timeZone"]
+        self.timezone = pytz.timezone(kwargs["start"]["timeZone"])
         self.dtr = DateTimeRange(
             start_datetime=kwargs["start"]["dateTime"],
             end_datetime=kwargs["end"]["dateTime"],
+            timezone=self.timezone,
         )
         self.dtr.start_time_format = "%Y/%m/%d %H:%M"
         self.dtr.end_time_format = "%H:%M"

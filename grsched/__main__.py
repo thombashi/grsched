@@ -180,10 +180,10 @@ def events(ctx: click.Context, user: Optional[str], since_str: Optional[str]) ->
     )
 
     if since_str is None:
-        since = datetime.now(tz=tz.tzlocal())
+        since = datetime.now()
     else:
         since = parse(since_str)
-    since = since.replace(minute=0, second=0, microsecond=0)
+    since = since.replace(hour=0, minute=0, second=0, microsecond=0).astimezone(tz.tzlocal())
 
     try:
         events, _has_next = client.fetch_events(start=since, target=target, target_type=target_type)
@@ -197,7 +197,7 @@ def events(ctx: click.Context, user: Optional[str], since_str: Optional[str]) ->
 
     writer = ptw.TableWriterFactory().create_from_format_name("space_aligned")
     writer.style_filter_kwargs = {
-        "now": datetime.now(pytz.timezone(events[0].timezone)),
+        "now": datetime.now(events[0].timezone),
         "dtrs": list(map(list, zip(*matrix)))[1],
     }
     writer.add_style_filter(style_filter)
