@@ -5,7 +5,7 @@ from typing import Dict, List, Optional, Tuple
 import retryrequests
 
 from ._const import LIMIT, MODULE_NAME
-from ._event import Event, User
+from ._event import Event, Organization, User
 from ._logger import logger  # type: ignore
 
 
@@ -65,6 +65,20 @@ class GaroonClient:
         data = response.json()
 
         return ([User(**user) for user in data["users"]], data["hasNext"])
+
+    def fetch_organizations(
+        self,
+        offset: int,
+    ) -> Tuple[List[Organization], bool]:
+        response = retryrequests.get(
+            url=self.__make_url(endpoint="base/organizations"),
+            headers=self.__make_headers(),
+            params={"limit": LIMIT, "offset": offset},
+        )
+        response.raise_for_status()
+        data = response.json()
+
+        return ([Organization(**org) for org in data["organizations"]], data["hasNext"])
 
     def __make_headers(self) -> Dict[str, str]:
         return {

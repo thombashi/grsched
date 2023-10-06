@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Any, Final, List
+from typing import Any, Dict, Final, List
 
 import pytz
 from datetimerange import DateTimeRange
@@ -15,6 +15,12 @@ class Object:
 
 class User(Object):
     pass
+
+
+@dataclass(frozen=True)
+class Organization(Object):
+    childOrganizations: List[Dict[str, str]]
+    parentOrganization: str
 
 
 class Facility(Object):
