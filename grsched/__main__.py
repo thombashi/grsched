@@ -191,6 +191,10 @@ def events(ctx: click.Context, user: Optional[str], since_str: Optional[str]) ->
         logger.error(e)
         sys.exit(errno.EACCES)
 
+    if not events:
+        logger.info("event not found")
+        sys.exit(0)
+
     matrix = []
     for event in events:
         matrix.append(event.as_row(event.is_all_day))
