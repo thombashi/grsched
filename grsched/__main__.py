@@ -35,13 +35,18 @@ class Context(Enum):
     CONFIGS = 2
 
 
-def _extract_targets(user: Optional[str] = None) -> Tuple[Optional[str], Optional[str]]:
+def _extract_targets(
+    user: Optional[str] = None, organization: Optional[str] = None
+) -> Tuple[Optional[str], Optional[str]]:
     target = None
     target_type = None
 
     if user:
         target = user
         target_type = "user"
+    elif organization:
+        target = organization
+        target_type = "organization"
 
     return (target, target_type)
 
@@ -166,15 +171,21 @@ def show(ctx: click.Context, event_ids: List[str], user: Optional[str]) -> None:
 @click.option(
     "--user", metavar="USER_ID", help="user id of the target. defaults to the login user."
 )
+@click.option("--organization", metavar="ORGANIZATION_ID", help="organization id of the target.")
 @click.option("--since", "since_str", metavar="DATETIME", help="datetime.")
-def events(ctx: click.Context, user: Optional[str], since_str: Optional[str]) -> None:
+def events(
+    ctx: click.Context,
+    user: Optional[str],
+    since_str: Optional[str],
+    organization: Optional[str],
+) -> None:
     """
     List events.
     """
 
     verbosity_level = ctx.obj[Context.VERBOSITY_LEVEL]
     app_configs = ctx.obj[Context.CONFIGS]
-    target, target_type = _extract_targets(user)
+    target, target_type = _extract_targets(user, organization)
     client = GaroonClient(
         subdomain=app_configs[ConfigKey.SUBDOMAIN], basic_auth=app_configs[ConfigKey.BASIC_AUTH]
     )
