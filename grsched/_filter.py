@@ -1,10 +1,15 @@
-from typing import Any, Final, Optional, Union
+from datetime import datetime
+from typing import Any, Final, List, Optional, Union
 
+from datetimerange import DateTimeRange
 from pytablewriter.style import Cell, Style
 from tcolorpy import Color
 
 
-GRAY: Final[Color] = Color("#bfbfbf")
+GRAY: Final[Color] = Color("8f8f8f")
+DARK_GRAY: Final[Color] = Color("#0f0f0f")
+DARK_RED: Final[Color] = Color("#8B0000")
+DARK_YELLOW: Final[Color] = Color("#554913")
 
 
 def _calc_other_ground_color(color: Color) -> Color:
@@ -19,9 +24,6 @@ def _calc_other_ground_color(color: Color) -> Color:
 def col_separator_style_filter(
     lcell: Optional[Cell], rcell: Optional[Cell], **kwargs: Any
 ) -> Optional[Style]:
-    fg_color: Union[Color, str, None] = None
-    bg_color: Union[Color, str, None] = None
-
     cell = lcell if lcell else rcell
     if cell is None:
         return None
@@ -29,21 +31,17 @@ def col_separator_style_filter(
     if cell.is_header_row():
         return None
 
-    row = cell.row
-    dtrs = kwargs["dtrs"]
-    now = kwargs["now"]
+    dtrs: Final[List[DateTimeRange]] = kwargs["dtrs"]
+    dtr: Final[DateTimeRange] = dtrs[cell.row]
+    now: Final[datetime] = kwargs["now"]
 
-    if row < 0:
-        return None
+    fg_color: Union[Color, str, None] = None
+    bg_color: Union[Color, str, None] = None
 
-    is_end = dtrs[row].end_datetime <= now
-    ddays = max(0, dtrs[row].end_datetime.day - now.day)
-    n = max(0, 255 - ddays * 32)
-    bg_color = Color((n, n, n))
-    fg_color = "black"
-
-    if is_end:
-        fg_color = GRAY
+    if now in dtr:
+        bg_color = DARK_RED
+    elif dtr.end_datetime and dtr.end_datetime.date() == now.date():
+        bg_color = DARK_YELLOW
 
     if fg_color or bg_color:
         return Style(color=fg_color, bg_color=bg_color)
@@ -52,22 +50,24 @@ def col_separator_style_filter(
 
 
 def style_filter(cell: Cell, **kwargs: Any) -> Optional[Style]:
-    fg_color: Union[Color, str, None] = None
-    bg_color: Union[Color, str, None] = None
-    dtrs = kwargs["dtrs"]
-    now = kwargs["now"]
-
-    if cell.row < 0:
+    if cell.is_header_row():
         return None
 
-    is_end = dtrs[cell.row].end_datetime <= now
-    ddays = max(0, dtrs[cell.row].end_datetime.day - now.day)
-    n = max(0, 255 - ddays * 32)
-    bg_color = Color((n, n, n))
-    fg_color = "black"
+    dtrs: Final[List[DateTimeRange]] = kwargs["dtrs"]
+    dtr: Final[DateTimeRange] = dtrs[cell.row]
+    now: Final[datetime] = kwargs["now"]
+    ended_event: Final[bool] = True if dtr.end_datetime and dtr.end_datetime < now else False
 
-    if is_end:
+    fg_color: Union[Color, str, None] = None
+    bg_color: Union[Color, str, None] = None
+
+    if ended_event:
         fg_color = GRAY
+
+    if now in dtr:
+        bg_color = DARK_RED
+    elif dtr.end_datetime and dtr.end_datetime.date() == now.date():
+        bg_color = DARK_YELLOW
 
     if fg_color or bg_color:
         return Style(color=fg_color, bg_color=bg_color)
