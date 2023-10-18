@@ -24,7 +24,6 @@ class GaroonClient:
         response = retryrequests.get(
             url=self.__make_url(endpoint="schedule/events", id=id),
             headers=self.__make_headers(),
-            params=self.__make_params(),
         )
         response.raise_for_status()
 
