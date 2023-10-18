@@ -33,10 +33,11 @@ class GaroonClient:
     def fetch_events(
         self,
         start: Optional[datetime],
+        days: int,
         target: Optional[str] = None,
         target_type: Optional[str] = None,
     ) -> Tuple[List[Event], bool]:
-        params = self.__make_params(start=start)
+        params = self.__make_params(start=start, days=days)
         if target:
             params["target"] = target
         if target_type:
@@ -86,7 +87,7 @@ class GaroonClient:
             "X-Cybozu-Authorization": self.__basic_auth,
         }
 
-    def __make_params(self, start: Optional[datetime] = None) -> Dict:
+    def __make_params(self, start: Optional[datetime] = None, days: int = 7) -> Dict:
         params = {
             "limit": LIMIT,
             "fields": ",".join(

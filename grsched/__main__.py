@@ -133,7 +133,7 @@ def show(ctx: click.Context, event_ids: List[str], user: Optional[str]) -> None:
         if event_id == "next":
             try:
                 events, _has_next = client.fetch_events(
-                    start=now, target=target, target_type=target_type
+                    start=now, days=14, target=target, target_type=target_type
                 )
             except (HTTPError, TooManyRedirects) as e:
                 logger.error(e)
@@ -172,11 +172,13 @@ def show(ctx: click.Context, event_ids: List[str], user: Optional[str]) -> None:
 )
 @click.option("--organization", metavar="ORGANIZATION_ID", help="organization id of the target.")
 @click.option("--since", "since_str", metavar="DATETIME", help="datetime.")
+@click.option("--days", type=int, default=5, help="datetime.")
 def events(
     ctx: click.Context,
     user: Optional[str],
     since_str: Optional[str],
     organization: Optional[str],
+    days: int,
 ) -> None:
     """
     List events.
@@ -196,7 +198,9 @@ def events(
     since = since.replace(hour=0, minute=0, second=0, microsecond=0).astimezone(tz.tzlocal())
 
     try:
-        events, _has_next = client.fetch_events(start=since, target=target, target_type=target_type)
+        events, _has_next = client.fetch_events(
+            start=since, days=days, target=target, target_type=target_type
+        )
     except (HTTPError, TooManyRedirects) as e:
         logger.error(e)
         sys.exit(errno.EACCES)
