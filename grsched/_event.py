@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Any, Dict, Final, List
+from typing import Any, Dict, Final, List, Optional
 
 import pytz
 from datetimerange import DateTimeRange
@@ -34,10 +34,10 @@ class Event:
         self.created_at: str = kwargs["createdAt"]
         self.updater = User(**kwargs["updater"])
         self.updated_at: str = kwargs["updatedAt"]
+        self.event_type: str = kwargs["eventType"]
         self.event_menu: str = kwargs["eventMenu"]
         self.subject: str = kwargs["subject"]
         self.notes: str = kwargs["notes"].replace("\r\n", "\n")
-        self.is_all_day: bool = kwargs["isAllDay"]
         self.attendees: List[User] = []
         self.facilities: List[Facility] = []
 
@@ -51,17 +51,27 @@ class Event:
 
             self.attendees.append(User(data["id"], data["name"], data["code"]))
 
-        self.timezone = pytz.timezone(kwargs["start"]["timeZone"])
-        self.dtr = DateTimeRange(
-            start_datetime=kwargs["start"]["dateTime"],
-            end_datetime=kwargs["end"]["dateTime"],
-            timezone=self.timezone,
-        )
-        self.dtr.start_time_format = "%Y/%m/%d %H:%M"
-        self.dtr.end_time_format = "%H:%M"
+        self.dtr: Optional[DateTimeRange] = None
+
+        if "start" not in kwargs and self.event_type == "REPEATING":
+            print()
+            print(kwargs["repeatInfo"])
+            repeat_info = kwargs["repeatInfo"]
+            self.is_all_day: bool = repeat_info["isAllDay"]
+            self.timezone = pytz.timezone(repeat_info["timeZone"])
+        else:
+            self.is_all_day = kwargs["isAllDay"]
+            self.timezone = pytz.timezone(kwargs["start"]["timeZone"])
+            self.dtr = DateTimeRange(
+                start_datetime=kwargs["start"]["dateTime"],
+                end_datetime=kwargs["end"]["dateTime"],
+                timezone=self.timezone,
+            )
+            self.dtr.start_time_format = "%Y/%m/%d %H:%M"
+            self.dtr.end_time_format = "%H:%M"
 
     def as_row(self, is_all_day: bool) -> List:
-        if is_all_day:
+        if is_all_day and self.dtr:
             self.dtr.start_time_format = "%Y/%m/%d"
             self.dtr.end_time_format = "all day"
 
@@ -73,10 +83,17 @@ class Event:
 
         lines = [
             tcolor(f"# {self.__make_subject()}", color=h1_color),
-            tcolor("## Date and time", color=h2_color),
-            str(self.dtr),
             "",
         ]
+
+        if self.dtr:
+            lines.extend(
+                [
+                    tcolor("## Date and time", color=h2_color),
+                    str(self.dtr),
+                    "",
+                ]
+            )
 
         if self.facilities:
             lines.extend(

@@ -213,7 +213,7 @@ def events(
     for event in events:
         matrix.append(event.as_row(event.is_all_day))
 
-    writer = ptw.TableWriterFactory().create_from_format_name("space_aligned")
+    writer = ptw.TableWriterFactory().create_from_format_name("markdown", margin=1)
     writer.style_filter_kwargs = {
         "now": datetime.now(events[0].timezone),
         "dtrs": list(map(list, zip(*matrix)))[1],
