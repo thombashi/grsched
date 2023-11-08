@@ -143,6 +143,10 @@ def show(ctx: click.Context, event_ids: List[str], user: Optional[str]) -> None:
                 if event.is_all_day:
                     continue
 
+                if event.dtr is None:
+                    logger.debug(f"event.dtr is None: {event}")
+                    continue
+
                 if event.dtr.start_datetime is None:
                     logger.warning(f"start_datetime of a event ({event}) is None")
                     continue
