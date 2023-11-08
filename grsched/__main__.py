@@ -217,16 +217,19 @@ def events(
     for event in events:
         matrix.append(event.as_row(event.is_all_day))
 
-    writer = ptw.TableWriterFactory().create_from_format_name("markdown", margin=1)
-    writer.style_filter_kwargs = {
-        "now": datetime.now(events[0].timezone),
-        "dtrs": list(map(list, zip(*matrix)))[1],
-    }
+    writer = ptw.TableWriterFactory().create_from_format_name(
+        "markdown",
+        headers=["id", "Date and time", "Subject"],
+        value_matrix=matrix,
+        margin=1,
+        style_filter_kwargs={
+            "now": datetime.now(events[0].timezone),
+            "dtrs": list(map(list, zip(*matrix)))[1],
+        },
+    )
     writer.add_style_filter(style_filter)
     writer.add_col_separator_style_filter(col_separator_style_filter)
 
-    writer.headers = ["id", "Date and time", "Subject"]
-    writer.value_matrix = matrix
     writer.write_table()
 
 
