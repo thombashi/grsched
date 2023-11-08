@@ -266,3 +266,40 @@ def users(ctx: click.Context) -> None:
     writer.value_matrix = matrix
     writer.set_theme("altrow")
     writer.write_table()
+
+
+@cmd.command(epilog=COMMAND_EPILOG)
+@click.pass_context
+def organizations(ctx: click.Context) -> None:
+    """
+    List organizations.
+    """
+
+    app_configs = ctx.obj[Context.CONFIGS]
+    client = GaroonClient(
+        subdomain=app_configs[ConfigKey.SUBDOMAIN], basic_auth=app_configs[ConfigKey.BASIC_AUTH]
+    )
+    matrix = []
+    has_next = True
+    offset = 0
+
+    while has_next:
+        try:
+            orgs, has_next = client.fetch_organizations(offset=offset)
+        except (HTTPError, TooManyRedirects) as e:
+            logger.error(e)
+            sys.exit(errno.EACCES)
+
+        for org in orgs:
+            matrix.append([org.id, org.name, org.code, org.parentOrganization])
+
+        offset += len(orgs)
+
+    writer = ptw.TableWriterFactory().create_from_format_name(
+        "markdown",
+        headers=["ID", "Name", "Code", "Parent Org"],
+        value_matrix=matrix,
+        theme="altrow",
+        margin=1
+    )
+    writer.write_table()
